@@ -18,6 +18,34 @@ let myMap = L.map("map", {
 }).addTo(myMap);
 
 
+//Earthquakes represented by circles, larger the EQ, larger the circle
+function sizeOfCircle(magnitude) {
+    return magnitude * 5;
+};
+
+//Also measuring depth. Color of circle gets darker as EQ gets deeper.
+//Light to dark:  Lavender, Thistle, Plum, Medium Orchid, Dark Orchid, Purple
+function colorOfCircle(depth) {
+    if (depth>=90) {
+        color = "#800080";
+    }
+    else if (depth < 90 && depth >= 70) {
+        color = "#9932cc";
+    }
+    else if (depth < 70 && depth >= 50) {
+        color = "#ba55d3";
+    }
+    else if (depth < 50 && depth >= 30) {
+        color = "#dda0dd";
+    }   
+     else if (depth < 30 && depth >= 10) {
+        color = "#d8bfd8";
+    }
+    else if (depth < 10 && depth >= -10) {
+        color = "#e6e6fa";
+    };
+    return color;
+};
 
 
 
@@ -42,10 +70,10 @@ d3.json(url).then(data => {
         circles = L.circleMarker([latitude, longitude], {
             color: "black",
             weight: 1,
-            fillColor: colorCircle(depth),
+            fillColor: colorOfCircle(depth),
             opactiy: 1,
             fillOpacity: 1,
-            radius: sizeCircle(magnitude)
+            radius: sizeOfCircle(magnitude)
         }).bindPopup(`<h3>${place}</h3><br/>Magnitude: ${magnitude}<br/>Depth: ${depth} km<br/> Coordinates: ${latitude}, ${longitude}`).addTo(myMap);
     };
 
@@ -74,7 +102,7 @@ d3.json(url).then(data => {
 
         for (var i = 0; i < limits.length; i++) {
             div.innerHTML +=
-                '<i style="background:' + colorCircle(limits[i] + 1) + '"></i> ' +
+                '<i style="background:' + colorOfCircle(limits[i] + 1) + '"></i> ' +
                 limits[i] + (limits[i + 1] ? '&ndash;' + limits[i + 1] + '<br>' : '+');
         }
 
@@ -84,3 +112,4 @@ d3.json(url).then(data => {
 //Add legend and title to map
     legend.addTo(myMap);
     info.addTo(myMap);
+});
