@@ -17,6 +17,39 @@ let myMap = L.map("map", {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(myMap);
 
+
+
+
+
+d3.json(url).then(data => {
+    //console.log(data);
+
+    var features = data.features;
+    var depth_array = [];
+
+    for (var i = 0; i < features.length; i++) {
+        var coordinates = features[i].geometry.coordinates;
+        
+        var longitude = coordinates[0];
+        var latitude = coordinates[1];
+        var depth = coordinates[2];
+        depth_array.push(depth);
+        var properties = features[i].properties;
+        var magnitude = properties.mag;
+        var place = properties.place;
+    
+        //no circles will appear on map until this leaflet code instructs it, including "tool tip" (click not hover)
+        circles = L.circleMarker([latitude, longitude], {
+            color: "black",
+            weight: 1,
+            fillColor: colorCircle(depth),
+            opactiy: 1,
+            fillOpacity: 1,
+            radius: sizeCircle(magnitude)
+        }).bindPopup(`<h3>${place}</h3><br/>Magnitude: ${magnitude}<br/>Depth: ${depth} km<br/> Coordinates: ${latitude}, ${longitude}`).addTo(myMap);
+    };
+
+
 //Create HTML title in a layer to show on map
     var info = L.control({position:"topright"});
 
